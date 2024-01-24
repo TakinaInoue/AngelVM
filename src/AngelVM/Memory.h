@@ -66,7 +66,7 @@ char* ValueAsString(Value* v) {
         case ValueInt16:
         case ValueInt32:
         case ValueInt64:
-            sprintf(outBuff, "%lld", v->as.int64);
+            sprintf(outBuff, "%ld", v->as.int64);
             break;
     }
     return outBuff;

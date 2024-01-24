@@ -14,13 +14,16 @@ void CreateFragment(Fragment* fragment) {
     InitByteArray(&fragment->instructions);
 } 
 
-uint16_t FragmentWriteConstant(Fragment* fragment, Value* v) {
-    ValueArrayWrite(&fragment->constants, v);
-    return (uint16_t)(fragment->constants.length - 1);
-}
-
 void FragmentWrite(Fragment* fragment, uint8_t op) {
     ByteArrayWrite(&fragment->instructions, op);
+}
+
+void FragmentWriteConstant(Fragment* fragment, Value* v) {
+    ValueArrayWrite(&fragment->constants, v);
+    uint8_t a, b;
+    Split((uint16_t)(fragment->constants.length - 1), &a, &b);
+    FragmentWrite(fragment, a);
+    FragmentWrite(fragment, b);
 }
 
 #endif
