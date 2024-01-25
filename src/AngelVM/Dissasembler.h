@@ -12,11 +12,16 @@ int DissasembleFragmentInstruction(Fragment* fragment, int offset) {
         printf("%s\n", name); \
         return offset + 1;
     #define U16Op(name) \
-        printf("%s %u\n", name, (fragment->instructions.data[offset+1], fragment->instructions.data[offset+2])); \
+        printf("%s %d %d \n", name, fragment->instructions.data[offset+1], fragment->instructions.data[offset+2]); \
         return offset + 3;\
  
     switch(fragment->instructions.data[offset]) {
-        case OpMove: U16Op("move");
+        case OpMove: 
+            printf("move %d -> %d", fragment->instructions.data[offset + 1], fragment->instructions.data[offset + 2]);
+            return offset + 3;
+        case OpMoveConstant: 
+            printf("move-constant %u -> %d \n", Join(fragment->instructions.data[offset+1], fragment->instructions.data[offset+2]), fragment->instructions.data[offset+3]);
+            return offset + 4;
         case OpReturn: SingleOperandOp("return")
         default:
             printf("unknown_op\n");

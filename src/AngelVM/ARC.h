@@ -3,8 +3,11 @@
 #ifndef AngelVM_Architecture
 #define AngelVM_Architecture
 
-#define OpReturn 0x0
-#define OpMove 0x1
+#define VM_RegisterCount 16
+
+#define OpReturn       0x0
+#define OpMove         0x1
+#define OpMoveConstant 0x02
 
 void Split(uint16_t t, uint8_t* a, uint8_t* b) {
     *a = t >> 8;
