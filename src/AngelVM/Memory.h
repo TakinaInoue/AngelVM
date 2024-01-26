@@ -26,9 +26,27 @@ typedef struct Value {
     int type;
 } Value;
 
+#define MaxUnusedValues 16
+int unusedValuesCount = 0;
+Value* unusedValues[MaxUnusedValues];
 
 Value* NewValue() {
-    return (Value*)malloc(sizeof(struct Value));
+    if (unusedValuesCount < 1)
+        return (Value*)malloc(sizeof(struct Value));
+    printf("Reusing value alloc\n");
+    Value* p = unusedValues[--unusedValuesCount];
+    unusedValues[unusedValuesCount] = NULL;
+    return p;
+}
+
+void FreeValue(Value* v) {
+    if (unusedValuesCount >= MaxUnusedValues) {
+        printf("Freed value directly\n");
+        free(v);
+    } else {
+        printf("Flaged value for re-use\n");
+        unusedValues[unusedValuesCount++] = v;
+    }
 }
 
 Value* MakeCompatible(Value* v, int target) {

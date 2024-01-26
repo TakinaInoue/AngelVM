@@ -11,6 +11,9 @@ typedef struct {
 } AngelVM;
 
 AngelVM CreateAVM() {
+    for (int i = 0; i < MaxUnusedValues; i++) {
+        unusedValues[i] = NULL;
+    }
     AngelVM vm;
     vm.ip = NULL;
     return vm;
@@ -37,6 +40,8 @@ void RunFragment(AngelVM* vm, Fragment* frag) {
                     a->as.int64 = a->as.int64 operat b->as.int64; \
                 vm->registers[destReg].as = a->as; \
                 vm->registers[destReg].type = a->type; \
+                FreeValue(a); \
+                FreeValue(b); \
                 break; \
             }
 
