@@ -12,9 +12,13 @@ int main(int argc, char** argv) {
     FragmentWrite(&fragment, 0);
     FragmentWrite(&fragment, 1);
     FragmentWrite(&fragment, 2);
+    FragmentWrite(&fragment, OpSub);
+    FragmentWrite(&fragment, 0);
+    FragmentWrite(&fragment, 1);
+    FragmentWrite(&fragment, 3);
     FragmentWrite(&fragment, OpReturn);
 
-   // DissasembleFragment(&fragment);
+    DissasembleFragment(&fragment);
 
     AngelVM vm = CreateAVM();
 

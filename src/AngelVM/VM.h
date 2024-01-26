@@ -21,6 +21,24 @@ void RunFragment(AngelVM* vm, Fragment* frag) {
     
     #define ReadByte() *vm->ip++
     #define ReadShort() Join(ReadByte(), ReadByte())
+    #define ArithInst(opname, operat) case opname: { \
+                uint8_t leftReg = ReadByte(); \
+                uint8_t rightReg = ReadByte(); \
+                uint8_t destReg = ReadByte(); \
+                Value* a = &vm->registers[leftReg]; \
+                Value* b = &vm->registers[rightReg]; \
+                a = MakeCompatible(a, a->type < b->type ? a->type : b->type); \
+                b = MakeCompatible(b, a->type < b->type ? a->type : b->type);  \
+                if (a->type == ValueFloat) \
+                    a->as.fp32 = a->as.fp32 operat b->as.fp32; \
+                else if (a->type == ValueDouble) \
+                    a->as.fp64 = a->as.fp64 operat b->as.fp64; \
+                else  \ 
+                    a->as.int64 = a->as.int64 operat b->as.int64; \
+                vm->registers[destReg].as = a->as; \
+                vm->registers[destReg].type = a->type; \
+                break; \
+            }
 
     for (;;) {
         for (int i = 0; i < VM_RegisterCount; i++) {
@@ -43,27 +61,12 @@ void RunFragment(AngelVM* vm, Fragment* frag) {
                 uint8_t srcReg = ReadByte();
                 uint8_t destReg = ReadByte();
                 vm->registers[destReg] = vm->registers[srcReg];
-                break;
             }
-            case OpAdd: {
-                uint8_t leftReg = ReadByte();
-                uint8_t rightReg = ReadByte();
-                uint8_t destReg = ReadByte();
-                Value* a = &vm->registers[leftReg];
-                Value* b = &vm->registers[rightReg];
-                a = MakeCompatible(a, a->type < b->type ? a->type : b->type);
-                b = MakeCompatible(b, a->type < b->type ? a->type : b->type); 
-                if (a->type == ValueFloat)
-                    a->as.fp32 = a->as.fp32 + b->as.fp32;
-                else if (a->type == ValueDouble)
-                    a->as.fp64 = a->as.fp64 + b->as.fp64;
-                else 
-                    a->as.int64 = a->as.int64 + b->as.int64;
-                    
-                vm->registers[destReg].as = a->as;
-                vm->registers[destReg].type = a->type;
-                break;
-            }
+            ArithInst(OpAdd, +)
+            ArithInst(OpSub, -)
+            ArithInst(OpMul, *)
+            ArithInst(OpDiv, /)
+            ArithInst(OpMod, *)
             case OpReturn:
                 printf("Fragment ended");
                 return;

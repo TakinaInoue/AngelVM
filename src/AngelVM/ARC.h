@@ -11,6 +11,10 @@
 #define OpMoveConstant 0x02 // <ushort - src> <ubyte - dest>
 //binary operations (all: <left - ubyte> <right - ubyte> <dest - ubyte>)
 #define OpAdd 0x10
+#define OpSub 0x11
+#define OpMul 0x12
+#define OpDiv 0x13
+#define OpMod 0x14
 
 void Split(uint16_t t, uint8_t* a, uint8_t* b) {
     *a = t >> 8;
