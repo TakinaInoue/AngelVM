@@ -3,11 +3,14 @@
 #ifndef AngelVM_Architecture
 #define AngelVM_Architecture
 
-#define VM_RegisterCount 16
+#define VM_RegisterCount 8
 
+//other
 #define OpReturn       0x0
-#define OpMove         0x1
-#define OpMoveConstant 0x02
+#define OpMove         0x01 // <ubyte - src> <ubyte - dest>
+#define OpMoveConstant 0x02 // <ushort - src> <ubyte - dest>
+//binary operations (all: <left - ubyte> <right - ubyte> <dest - ubyte>)
+#define OpAdd 0x10
 
 void Split(uint16_t t, uint8_t* a, uint8_t* b) {
     *a = t >> 8;

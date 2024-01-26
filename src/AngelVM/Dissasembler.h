@@ -17,8 +17,11 @@ int DissasembleFragmentInstruction(Fragment* fragment, int offset) {
  
     switch(fragment->instructions.data[offset]) {
         case OpMove: 
-            printf("move %d -> %d", fragment->instructions.data[offset + 1], fragment->instructions.data[offset + 2]);
+            printf("move %d -> %d\n", fragment->instructions.data[offset + 1], fragment->instructions.data[offset + 2]);
             return offset + 3;
+        case OpAdd:
+            printf("add %d %d to %d\n", fragment->instructions.data[offset + 1], fragment->instructions.data[offset + 2], fragment->instructions.data[offset + 3]);
+            return offset + 4;
         case OpMoveConstant: 
             printf("move-constant %u -> %d \n", Join(fragment->instructions.data[offset+1], fragment->instructions.data[offset+2]), fragment->instructions.data[offset+3]);
             return offset + 4;

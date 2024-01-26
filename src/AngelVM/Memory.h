@@ -26,8 +26,26 @@ typedef struct Value {
     int type;
 } Value;
 
+
 Value* NewValue() {
     return (Value*)malloc(sizeof(struct Value));
+}
+
+Value* MakeCompatible(Value* v, int target) {
+    Value* res = NewValue();
+    res->type = target;
+    if (v->type <= ValueDouble && target >= ValueInt8) {
+        if (v->type == ValueFloat) 
+            res->as.int64 = (uint64_t) v->as.fp32;
+        else
+            res->as.int64 = (uint64_t) v->as.fp64;
+    } else if (v->type > ValueDouble && target <= ValueDouble) {
+        if (target == ValueFloat) res->as.fp32 = (float) v->as.int64;
+        else res->as.fp64 = (float) v->as.int64;    
+    } else {
+        res->as = v->as;
+    }
+    return res;
 }
 
 #define NewIntVal(NAME, TYPE, VALUETYPE) \

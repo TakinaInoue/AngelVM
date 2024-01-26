@@ -24,7 +24,7 @@ void RunFragment(AngelVM* vm, Fragment* frag) {
 
     for (;;) {
         for (int i = 0; i < VM_RegisterCount; i++) {
-            if (i % 6 == 0) printf("|\n");
+            if (i % 4 == 0) printf("|\n");
             printf("|r%02d = %16s", i, ValueAsString(&vm->registers[i]));
         }
         printf("|\n");
@@ -43,6 +43,25 @@ void RunFragment(AngelVM* vm, Fragment* frag) {
                 uint8_t srcReg = ReadByte();
                 uint8_t destReg = ReadByte();
                 vm->registers[destReg] = vm->registers[srcReg];
+                break;
+            }
+            case OpAdd: {
+                uint8_t leftReg = ReadByte();
+                uint8_t rightReg = ReadByte();
+                uint8_t destReg = ReadByte();
+                Value* a = &vm->registers[leftReg];
+                Value* b = &vm->registers[rightReg];
+                a = MakeCompatible(a, a->type < b->type ? a->type : b->type);
+                b = MakeCompatible(b, a->type < b->type ? a->type : b->type); 
+                if (a->type == ValueFloat)
+                    a->as.fp32 = a->as.fp32 + b->as.fp32;
+                else if (a->type == ValueDouble)
+                    a->as.fp64 = a->as.fp64 + b->as.fp64;
+                else 
+                    a->as.int64 = a->as.int64 + b->as.int64;
+                    
+                vm->registers[destReg].as = a->as;
+                vm->registers[destReg].type = a->type;
                 break;
             }
             case OpReturn:
