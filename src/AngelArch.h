@@ -1,5 +1,9 @@
 #pragma once
 
+#define AngelVM_H0 0x000
+
+#define AngelVM_Arch AngelVM_H0
+
 typedef enum OpSet {
     Push = 0x01,
     Pop  = 0x02,   
