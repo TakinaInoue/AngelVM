@@ -1,5 +1,8 @@
 {
+    "cmake.configureOnOpen": false,
     "files.associations": {
-        "bytecode.h": "c"
+        "*.df": "julia",
+        "*.ly": "javascript",
+        "angelmemory.h": "c"
     }
 }

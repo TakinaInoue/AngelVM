@@ -1,2 +1,1 @@
-@clang -c src/main.c -o bin/main.obj
-@clang bin/main.obj -o bin/windows/angelvm.exe
+@clang -DAngelVM_Debug -g src/main.cpp -O0 -o angelvm.exe
