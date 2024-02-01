@@ -1,1 +1,0 @@
-clang -DAngelVM_Debug -g src/main.cpp -O0 -o angelvm
