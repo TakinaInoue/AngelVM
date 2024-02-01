@@ -1,1 +1,1 @@
-@clang src/main.cpp -O3 -o angelvm.exe
+@clang src/main.cpp -O2 -funsafe-math-optimizations -o angelvm.exe

@@ -14,5 +14,9 @@ typedef enum OpSet {
     Mul = 0x13,
     Mod = 0x14,
 
+    MemSize = 0x20,
+    Load    = 0x21,
+    Pull    = 0x22,
+
     Return = 0xFF
 } OpSet;

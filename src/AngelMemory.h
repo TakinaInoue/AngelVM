@@ -40,6 +40,13 @@ Value* NewValue() {
     return (Value*)malloc(sizeof(struct Value));
 }
 
+Value* CloneValue(Value* v) {
+    Value* t = NewValue();
+    t->as = v->as;
+    t->type = v->type;
+    return t; 
+}
+
 Value* MakeCompatible(Value* v, int target) {
     Value* res = NewValue();
     res->type = target;

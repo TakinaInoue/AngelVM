@@ -44,9 +44,10 @@ AngelCore* CreateAngelCore() {
 void CoreReset(AngelCore* core) {
     for (CallFrame* ptr = core->callFrameTop; ptr > core->callStack; ptr++) {
         for (size_t i = 0; i < ptr->locals.length; i++) {
-         //   FreeValue(ptr->locals.data[i]);
+         // TODO flag ptr->locals.data[i] for deletion
         }
-        free(&ptr->locals.data);
+        if (ptr->locals.memSize > 0)
+            free(ptr->locals.data);
         InitValueArray(&ptr->locals);
         ptr->fragment = NULL;
         ptr->ip = NULL;
@@ -118,17 +119,13 @@ void CoreExecute(AngelCore* core) {
     switch(it) {
         case OpSet::Push: {
             uint16_t constIndex = ReadShort();
-            printf("%zu\n", constIndex);
-            Push(core->callFrameTop->fragment->values.data[constIndex]);
+            Push(CloneValue(core->callFrameTop->fragment->values.data[constIndex]));
             break;
         }
         case OpSet::Pop: {
             Pop();
+            // TODO delete the value
             break;
-        }
-        case OpSet::Return: {
-            printf(" == vm quit == \n");
-            return;
         }
         ArithInst(Add, +)
         ArithInst(Sub, -)
@@ -143,7 +140,36 @@ void CoreExecute(AngelCore* core) {
                 b = MakeCompatible(b, ValueInt64);
             a->as.int64 = a->as.int64 % b->as.int64;
             Push(a);
+            // TODO flag a and b for deletion
             break;
+        }
+        case OpSet::MemSize: {
+            uint16_t desiredCapacity = ReadShort();
+
+            if (core->callFrameTop->locals.memSize < desiredCapacity) {
+                size_t remeaning = desiredCapacity - core->callFrameTop->locals.memSize;
+                for (size_t i = 0; i < remeaning; i++) {
+                    ValueArrayWrite(&core->callFrameTop->locals, NewValue());
+                }
+            }
+            break;
+        }
+        case OpSet::Load: {
+            uint16_t offs = ReadShort();
+            Value* p = Pop();
+            core->callFrameTop->locals.data[offs]->as = p->as;
+            core->callFrameTop->locals.data[offs]->type = p->type;
+            // TODO flag p for deletion
+            break;
+        }
+        case OpSet::Pull: {
+            uint16_t offs = ReadShort();
+            Push(CloneValue(core->callFrameTop->locals.data[offs]));
+            break;
+        }
+        case OpSet::Return: {
+            printf(" == vm quit == \n");
+            return;
         }
         default:
             printf("//// CRITICAL ERROR ////\n");
