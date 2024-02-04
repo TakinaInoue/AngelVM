@@ -1,9 +1,9 @@
 module angel.core;
 
-import std.format;
+import core.stdc.stdio;
+import core.stdc.stdlib;
 
 import angel.vm;
-import core.memory : GC;
 
 struct CallFrame {
     ubyte* ip;
@@ -28,7 +28,7 @@ final class AngelCore {
 
     void Reset() {
         stackTop = stack.ptr;
-        GC.free(callStackTop);
+        free(callStackTop);
         callStackTop = null;
     }
 
@@ -61,15 +61,14 @@ final class AngelCore {
     void Execute() {
         for (;;) {
             debug {
-                import std.stdio;
                 for (Value* p = stack.ptr; p < stackTop; p++) {
-                    write(*p, " ");
+                    printf("%s", *p);
                 }
-                writeln();
+                printf("\n");
                 DissasembleInst(cast(size_t)(callStackTop.ip - callStackTop.fragment.instructions.ptr), callStackTop.fragment);
             }
             ubyte it = ReadByte();
-            switch(it) {
+            switch(it & 0xFF) {
                 case OpSet.Push: {
                     Push(callStackTop.fragment.values[ReadShort()]);
                     break;
@@ -92,7 +91,7 @@ final class AngelCore {
                 }
                 case OpSet.Load: {
                     ushort li = ReadShort();
-                    callStackTop.locals[li] = StackGet(0);
+                    callStackTop.locals[li] = StackGet(1);
                     break;
                 }
                 case OpSet.Pull: {
@@ -108,12 +107,20 @@ final class AngelCore {
                     callStackTop.ip -= ReadShort();
                     break;
                 }
+                case OpSet.JumpIfFalse: {
+                    ushort offs = ReadShort();
+                    if (StackGet(1).as.i64 < 0) {
+                        callStackTop.ip += offs;
+                    }
+                    break;
+                }
                 case OpSet.Return: {
                     callStackTop = callStackTop.prev;
                     return;
                 }
-                default: throw new Exception(
-                    format("Unknown opcode %X likely poor implementation or poor bytecode",it));
+                default: writeln(
+                    format("Unknown opcode %X likely poor implementation or poor bytecode",it)
+                ); assert(false); break;
             }
             instructionsExecuted++;
         }

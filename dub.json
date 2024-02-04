@@ -1,5 +1,10 @@
 {
+	"authors": [
+		"たきな"
+	],
+	"copyright": "Copyright © 2024, たきな",
+	"description": "A minimal D application.",
+	"license": "proprietary",
 	"name": "angelvm",
-    "sourcePaths": ["src"],
-    "targetName": "angelvm"
+    "buildOptions": ["betterC"]
 }

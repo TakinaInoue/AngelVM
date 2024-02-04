@@ -1,0 +1,5 @@
+{
+	"name": "angelvm",
+    "sourcePaths": ["src"],
+    "targetName": "angelvm"
+}

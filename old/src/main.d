@@ -1,20 +1,20 @@
 module main;
 
+import std.file;
 import std.stdio;
 import core.stdc.time;
 
 import angel.vm;
+import angeloscope.Parser;
 
 void main() {    
-    Fragment fragment = new Fragment("entry");
+    Parser parser = new Parser("test.ao", readText("test.ao"));
+    writeln(parser.Parse() is null ? "Compilation Failed":"Okay.");
 
-    fragment.WriteValue(1, OpSet.Push, NewFloat(34));
-    fragment.WriteValue(1, OpSet.Push, NewFloat(46));
-    fragment.Write(2, OpSet.Add, OpSet.ResetStack, OpSet.Return);
-
-    Dissasemble(fragment);
-    
     AngelCore core = new AngelCore();
+
+
+    /*
     time_t prev;
     time (&prev);
     uint[] ipsArray;
@@ -33,5 +33,5 @@ void main() {
         total += i;
     }
     total /= ipsArray.length;
-    writeln("Average MIPS: ",  total / 1000000);
+    writeln("Average MIPS: ",  total / 1000000);*/
 }

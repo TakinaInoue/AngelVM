@@ -1,0 +1,10 @@
+.entry:
+    dv opLeft Float 4.3
+    push opLeft
+    
+    msize 1
+    load test
+
+    restk
+    
+    ret

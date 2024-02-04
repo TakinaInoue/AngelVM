@@ -4,7 +4,7 @@ const string AngelVM_H1 = "H1";
 
 const string AngelVM_Arch = AngelVM_H1; // or "Implementation Version"
 
-enum OpSet {
+enum OpSet : ubyte {
     Push = 0x01,
     ResetStack = 0x02,
    //Pop  = 0x02, -- changed the way the stack works.
@@ -19,8 +19,9 @@ enum OpSet {
     Load    = 0x21,
     Pull    = 0x22,
 
-    Jump     = 0x30,
-    JumpBack = 0x31,
+    Jump        = 0x30,
+    JumpBack    = 0x31,
+    JumpIfFalse = 0x32,
 
     Return = 0xFF
 }
